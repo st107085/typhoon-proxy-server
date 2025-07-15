@@ -4,6 +4,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS # 用於允許前端網頁存取
 import requests # 用於發送 HTTP 請求
+import json # 導入 json 模組用於解析錯誤
 
 app = Flask(__name__)
 CORS(app) # 允許所有來源的跨域請求，在實際部署時應限制特定來源以增加安全性
@@ -11,8 +12,8 @@ CORS(app) # 允許所有來源的跨域請求，在實際部署時應限制特�
 # 中央氣象署開放資料平台 API Key (請替換為您的真實 Key)
 CWA_API_KEY = 'CWA-DA27CC49-2356-447C-BDB3-D5AA4071E24B'
 # 中央氣象署颱風警報 API 端點
-# **重要：將資料集 ID 更換為 W-C0034-005 (熱帶氣旋路徑)**
-CWA_TYPHOON_API_URL = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0034-005'
+# **重要：將資料集 ID 更換為 W-C0034-002 (天氣特報內容)**
+CWA_TYPHOON_API_URL = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0034-002'
 
 @app.route('/get-typhoon-data', methods=['GET'])
 def get_typhoon_data():
@@ -25,18 +26,33 @@ def get_typhoon_data():
         api_response = requests.get(f"{CWA_TYPHOON_API_URL}?Authorization={CWA_API_KEY}")
         api_response.raise_for_status() # 如果響應狀態碼不是 200，則拋出 HTTPError
 
+        # 嘗試解析 JSON，如果不是 JSON 格式，會拋出 ValueError
         data = api_response.json()
         return jsonify(data) # 將從氣象署獲取的資料直接返回給前端
 
     except requests.exceptions.RequestException as e:
         # 處理網路請求錯誤（例如連線失敗、超時等）
         print(f"向中央氣象署 API 請求失敗: {e}")
-        # 返回更詳細的錯誤訊息給前端，包含 CWA API 的回應內容
-        return jsonify({"error": "無法從中央氣象署獲取資料", "details": str(e), "cwa_response_status": api_response.status_code if 'api_response' in locals() else None, "cwa_response_text": api_response.text if 'api_response' in locals() else None}), 500
-    except ValueError as e:
-        # 處理 JSON 解析錯誤
-        print(f"解析中央氣象署 API 回應失敗: {e}")
-        return jsonify({"error": "解析 API 回應失敗", "details": str(e)}), 500
+        # 嘗試獲取 CWA API 的回應內容，以便偵錯
+        cwa_response_status = api_response.status_code if 'api_response' in locals() and api_response else None
+        cwa_response_text = api_response.text if 'api_response' in locals() and api_response else None
+        
+        return jsonify({
+            "error": "無法從中央氣象署獲取資料",
+            "details": str(e),
+            "cwa_response_status": cwa_response_status,
+            "cwa_response_text": cwa_response_text
+        }), 500
+    except json.JSONDecodeError as e: # 捕獲 JSON 解析錯誤
+        print(f"解析中央氣象署 API 回應失敗 (非 JSON 格式): {e}")
+        cwa_response_status = api_response.status_code if 'api_response' in locals() and api_response else None
+        cwa_response_text = api_response.text if 'api_response' in locals() and api_response else None
+        return jsonify({
+            "error": "解析 API 回應失敗 (非 JSON 格式)",
+            "details": str(e),
+            "cwa_response_status": cwa_response_status,
+            "cwa_response_text": cwa_response_text
+        }), 500
     except Exception as e:
         # 處理其他未知錯誤
         print(f"伺服器代理發生未知錯誤: {e}")
