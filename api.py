@@ -1,3 +1,5 @@
+# 這是小秋的代理伺服器，最新更新測試
+# 這是 Python Flask 框架的範例程式碼...
 # 這是 Python Flask 框架的範例程式碼，您需要安裝 Flask (pip install Flask requests)
 # 並將其部署到一個雲端伺服器環境中才能運行。
 
