@@ -11,7 +11,8 @@ CORS(app) # 允許所有來源的跨域請求，在實際部署時應限制特�
 # 中央氣象署開放資料平台 API Key (請替換為您的真實 Key)
 CWA_API_KEY = 'CWA-DA27CC49-2356-447C-BDB3-D5AA4071E24B'
 # 中央氣象署颱風警報 API 端點
-CWA_TYPHOON_API_URL = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0058-001'
+# **重要：將資料集 ID 更換為 W-C0034-005 (熱帶氣旋路徑)**
+CWA_TYPHOON_API_URL = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0034-005'
 
 @app.route('/get-typhoon-data', methods=['GET'])
 def get_typhoon_data():
@@ -30,7 +31,8 @@ def get_typhoon_data():
     except requests.exceptions.RequestException as e:
         # 處理網路請求錯誤（例如連線失敗、超時等）
         print(f"向中央氣象署 API 請求失敗: {e}")
-        return jsonify({"error": "無法從中央氣象署獲取資料", "details": str(e)}), 500
+        # 返回更詳細的錯誤訊息給前端，包含 CWA API 的回應內容
+        return jsonify({"error": "無法從中央氣象署獲取資料", "details": str(e), "cwa_response_status": api_response.status_code if 'api_response' in locals() else None, "cwa_response_text": api_response.text if 'api_response' in locals() else None}), 500
     except ValueError as e:
         # 處理 JSON 解析錯誤
         print(f"解析中央氣象署 API 回應失敗: {e}")
