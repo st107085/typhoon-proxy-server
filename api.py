@@ -1,5 +1,3 @@
-# 這是小秋的代理伺服器，最新更新測試
-# 這是 Python Flask 框架的範例程式碼...
 # 這是 Python Flask 框架的範例程式碼，您需要安裝 Flask (pip install Flask requests)
 # 並將其部署到一個雲端伺服器環境中才能運行。
 
@@ -14,8 +12,8 @@ CORS(app) # 允許所有來源的跨域請求，在實際部署時應限制特�
 # 中央氣象署開放資料平台 API Key (請替換為您的真實 Key)
 CWA_API_KEY = 'CWA-DA27CC49-2356-447C-BDB3-D5AA4071E24B'
 # 中央氣象署颱風警報 API 端點
-# **重要：將資料集 ID 更換為 W-C0034-002 (天氣特報內容)**
-CWA_TYPHOON_API_URL = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0034-002'
+# **重要：將資料集 ID 更換為 W-C0034-005 (熱帶氣旋路徑)**
+CWA_TYPHOON_API_URL = 'https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0034-005'
 
 @app.route('/get-typhoon-data', methods=['GET'])
 def get_typhoon_data():
