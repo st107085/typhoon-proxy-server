@@ -111,3 +111,11 @@ def get_cwa_warnings():
     except Exception as e:
         print(f"伺服器代理獲取警報發生未知錯誤: {e}")
         return jsonify({"error": "伺服器內部錯誤", "details": str(e)}), 500
+
+
+
+
+
+
+
+
