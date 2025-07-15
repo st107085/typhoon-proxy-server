@@ -66,6 +66,7 @@ def get_cwa_warnings():
     """
     這個路由會作為前端網頁的代理，去中央氣象署 RSS 服務獲取警報特報資料。
     """
+    print("Received request for /get-cwa-warnings") # 新增：確認請求是否到達代理伺服器
     try:
         rss_response = requests.get(CWA_RSS_WARNING_URL)
         rss_response.raise_for_status() # 如果響應狀態碼不是 200，則拋出 HTTPError
