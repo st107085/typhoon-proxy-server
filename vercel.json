@@ -1,19 +1,16 @@
+    {
+      "version": 2,
+      "builds": [
         {
-          "version": 2,
-          "builds": [
-            {
-              "src": "api.py",
-              "use": "@vercel/python"
-            }
-          ],
-          "routes": [
-            {
-              "src": "/get-typhoon-data",
-              "dest": "api.py"
-            }
-          ]
+          "src": "api.py",
+          "use": "@vercel/python"
         }
-        
-
-
-
+      ],
+      "routes": [
+        {
+          "src": "/(.*)",
+          "dest": "api.py"
+        }
+      ]
+    }
+    
