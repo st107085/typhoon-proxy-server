@@ -111,8 +111,3 @@ def get_cwa_warnings():
     except Exception as e:
         print(f"伺服器代理獲取警報發生未知錯誤: {e}")
         return jsonify({"error": "伺服器內部錯誤", "details": str(e)}), 500
-
-if __name__ == '__main__':
-    # 在本地運行伺服器，僅供開發測試使用
-    # 在實際部署到雲端服務時，通常不需要這段，雲端服務會有自己的啟動方式
-    app.run(host='0.0.0.0', port=5000)
